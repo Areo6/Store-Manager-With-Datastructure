@@ -56,8 +56,8 @@ def valid_id(id):
         return "Invalid id. Id must be a positive number"
     return "Valid"
 
-def json_msg(header,msg):
+def json_msg(msg):
     """
     This method returns a message in json format
     """
-    return jsonify({header:msg})
+    return jsonify({"Message": msg})
