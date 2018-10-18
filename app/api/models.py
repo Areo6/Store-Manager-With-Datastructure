@@ -101,6 +101,19 @@ class SaleOrder():
         This allows the admin user to ftch all the sale order records
         """
         if len(sales) == 0:
-            return "The are no sale orders made yet"
+            return "Oops! The are no sale orders made yet"
         return sales
+
+    def get_sale_record(self,id):
+        """
+        This method allows the user to fetch a specif sale record
+        """
+        if valid_id(id) != "Valid":
+            return valid_id(id)
+        if len(sales) == 0:
+            return "Oops! It's lonely here. No sale records yet"
+        order = [x for x in sales if x["id"] == id]
+        if len(order) == 0:
+            return "Sale record number {} is not found in the sale records. Use a valid number".format(id)
+        return order[0]
     

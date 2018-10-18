@@ -72,5 +72,21 @@ def create_sale_order():
         return json_msg(order), 417
     return json_msg(order), 201
 
-# @mod.route("/sales", methods = ["GET"])
-# def get_sales():
+@mod.route("/sales", methods = ["GET"])
+def get_all_sales():
+    """
+    This enpoint allows the owner/admin to view all sales records available
+    """
+    return json_msg(sale.get_all_sales()), 200
+
+@mod.route("/sales/<int:id>", methods = ["GET"])
+def get_sale(id):
+    """
+    This endpoint allows the user to fetch a specific sale record
+    """
+    if valid_id(id) != "Valid":
+        return json_msg(valid_id(id)), 400
+    order = sale.get_sale_record(id)
+    if not isinstance(order, dict):
+        return json_msg(order), 404
+    return json_msg(order), 200
