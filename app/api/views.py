@@ -49,3 +49,28 @@ def get_product(id):
         return json_msg(prod), 404
     return json_msg(prod), 200
 
+@mod.route("/sales", methods = ["POST"])
+def create_sale_order():
+    """
+    This endpoint allows the store attendant to create a sale record
+    """
+    try:
+        json.loads(request.get_data())
+    except (ValueError, TypeError):
+        return json_msg("Bad request, your request should be a dictionary"), 400
+    data = request.get_json(force=True)
+    if not data:
+        return json_msg("Bad request, your request should be a dictionary"), 400
+    if len(data) < 3:
+        return json_msg("Insuficiant number of inputs. PLz make sure product_id, quantity and attendant_name are included in the request"), 400
+    if len(data) > 3:
+        return json_msg("Too many arguments. only product_id, quantity and attendant_name are required"), 4014
+    if not "product_id" in data or not "quantity" in data or not "at_name" in data: 
+        return json_msg("Plz make sure product_id, quantity and attendant_name are included int he request")
+    order = sale.add_sale_order(data["product_id"], data["quantity"], data["at_name"])
+    if order != "Successfully added sale order":
+        return json_msg(order), 417
+    return json_msg(order), 201
+
+# @mod.route("/sales", methods = ["GET"])
+# def get_sales():
