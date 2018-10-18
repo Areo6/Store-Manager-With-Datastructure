@@ -1,5 +1,5 @@
 from flask import Blueprint, request, json
-from api.validation import json_msg
+from api.validation import valid_id, json_msg
 from api.models import Products, SaleOrder
 
 
@@ -34,9 +34,18 @@ def create_product():
         return json_msg("PLz make sure name, price, qty, qty_allowed, and category are included in the request"), 400
     prod = product.add_product(data["name"],data["price"],data["quantity"], data["min_quantity"], data["category"])
     if prod != "Successfully added product":
-        return json_msg(prod),417
+        return json_msg(prod), 417
     return json_msg(prod), 201
 
-    
-
+@mod.route("/products/<int:id>", methods = ["GET"])
+def get_product(id):
+    """
+    This endpoint allows the user fetch a specific product
+    """
+    if valid_id(id) != "Valid":
+        return json_msg("Invalid Id. Must be a positive number"), 400
+    prod = product.get_product(id)
+    if not isinstance(prod, dict):
+        return json_msg(prod), 404
+    return json_msg(prod), 200
 
