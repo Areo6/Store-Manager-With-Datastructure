@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.com/Eubule/Store-Manager-With-Datastructure.svg?branch=master)](https://travis-ci.com/Eubule/Store-Manager-With-Datastructure)
-[![Coverage Status](https://coveralls.io/repos/github/Eubule/Store-Manager-With-Datastructure/badge.svg?branch=master)](https://coveralls.io/github/Eubule/Store-Manager-With-Datastructure?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/Eubule/Store-Manager-With-Datastructure/badge.svg)](https://coveralls.io/github/Eubule/Store-Manager-With-Datastructure)
 
 # Store-Manager-With-Datastructure
 Store Manager is a web application that helps store owners manage sales and product inventory  records
