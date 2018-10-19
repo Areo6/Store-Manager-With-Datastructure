@@ -1,5 +1,4 @@
 [![Build Status](https://travis-ci.com/Eubule/Store-Manager-With-Datastructure.svg?branch=develop)](https://travis-ci.com/Eubule/Store-Manager-With-Datastructure)
-
 [![Coverage Status](https://coveralls.io/repos/github/Eubule/Store-Manager-With-Datastructure/badge.svg?branch=master)](https://coveralls.io/github/Eubule/Store-Manager-With-Datastructure?branch=master)
 
 # Store-Manager-With-Datastructure
@@ -19,3 +18,7 @@ Store Manager is a web application that helps store owners manage sales and prod
  **GET** | /products/< productId> | Fetches a specific product
  **GET** | /sales | Admin fetches all sale records
  **GET** | /sales/< productId> | Fetches a specific sale record
+
+ ## BUIT WITH
+
+ * Flask-Python
