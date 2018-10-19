@@ -6,3 +6,14 @@ Store Manager is a web application that helps store owners manage sales and prod
 ## Link to Store Manager on Github Pages
 
 [Store Manager](https://github.com/Eubule/Store-Manager-With-Datastructure/)
+
+## Routes captured by Store Manager
+
+ REQUEST | ROUTE | FUNCTIONALITY
+ ------- | ----- | -------------
+ **POST** | /products | Admin creates a new product
+ **POST** | /Sales | Attendant creates new sale records
+ **GET** | /products | Fetches all products
+ **GET** | /products/< productId> | Fetches a specific product
+ **GET** | /sales | Admin fetches all sale records
+ **GET** | /sales/< productId> | Fetches a specific sale record
