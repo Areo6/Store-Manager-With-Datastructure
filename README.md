@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.com/Eubule/Store-Manager-With-Datastructure.svg?branch=master)](https://travis-ci.com/Eubule/Store-Manager-With-Datastructure)
-[![Coverage Status](https://coveralls.io/repos/github/Eubule/My-Todo-List-with-database/badge.svg?branch=master)](https://coveralls.io/github/Eubule/My-Todo-List-with-database?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/Eubule/Store-Manager-With-Datastructure/badge.svg?branch=master)](https://coveralls.io/github/Eubule/Store-Manager-With-Datastructure?branch=master)
 [![Maintainability](https://api.codeclimate.com/v1/badges/5741cbf4174da77be5bd/maintainability)](https://codeclimate.com/github/Eubule/Store-Manager-With-Datastructure/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/5741cbf4174da77be5bd/test_coverage)](https://codeclimate.com/github/Eubule/Store-Manager-With-Datastructure/test_coverage)
 
