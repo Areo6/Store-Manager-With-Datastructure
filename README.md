@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/Eubule/Store-Manager-With-Datastructure.svg?branch=develop)](https://travis-ci.com/Eubule/Store-Manager-With-Datastructure)
+[![Build Status](https://travis-ci.com/Eubule/Store-Manager-With-Datastructure.svg?branch=master)](https://travis-ci.com/Eubule/Store-Manager-With-Datastructure)
 [![Coverage Status](https://coveralls.io/repos/github/Eubule/Store-Manager-With-Datastructure/badge.svg?branch=master)](https://coveralls.io/github/Eubule/Store-Manager-With-Datastructure?branch=master)
 
 # Store-Manager-With-Datastructure
