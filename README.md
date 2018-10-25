@@ -12,7 +12,7 @@ Store Manager is a web application that helps store owners manage sales and prod
 
 ## Link to Store-Manage-Using-Datatucture App on Heroku
 
-[Store-Manage-Using-Datatucture](https://store-manager-malaba.herokuapp.com/products)
+[Store-Manage-Using-Datatucture](https://store-manager-malaba.herokuapp.com/api/v1/products)
 
 ## Routes captured by Store Manager
 
