@@ -1,13 +1,27 @@
 from api.validation import *
 
 
-products = []
-sales = []
+products = [{
+            "id": 1,
+            "name": "LDC1",
+            "price": 500000,
+            "quantity": 56,
+            "min_quantity": 1,
+            "category": "Televisions"
+        }]
+sales = [{
+            "id": 1,
+            "product_id": 1,
+            "price": 500000,
+            "quantity": 5,
+            "total": 2500000,
+            "at_name": "Malaba"
+        }]
 
 class Products():
     """
     This class deals with all the product's manipulations
-    """ 
+    """
     def get_all_products(self):
         """
         This method is used by the admin to view all the products in store
@@ -78,7 +92,7 @@ class SaleOrder():
             return "Empty store. There are no products in store yet"
         prod = [x for x in products if x["id"] == prod_id]
         if len(prod) == 0:
-            return "Product with id {} was not found in store. Please put a valid one".format(prod_id)
+            return "Product with id {} was not found in store.".format(prod_id)
         qty = prod[0]["quantity"]
         if quantity > qty:
             return "Invalid quantity. Qty ordered must be less than {}(qty in store)".format(qty)
@@ -114,6 +128,6 @@ class SaleOrder():
             return "Oops! It's lonely here. No sale records yet"
         order = [x for x in sales if x["id"] == id]
         if len(order) == 0:
-            return "Sale record number {} is not found in the sale records. Use a valid number".format(id)
+            return "Sale record number {} is not found in the sale records".format(id)
         return order[0]
     
