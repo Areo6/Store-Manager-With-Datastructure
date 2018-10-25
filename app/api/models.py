@@ -3,7 +3,7 @@ from api.validation import *
 
 products = [{
             "id": 1,
-            "name": "LD1",
+            "name": "LDC1",
             "price": 500000,
             "quantity": 56,
             "min_quantity": 1,
