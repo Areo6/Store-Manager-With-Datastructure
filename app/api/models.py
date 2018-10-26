@@ -56,7 +56,7 @@ class Products():
         if valid_quantity(min_qty_allowed) != "Valid":
             return valid_quantity(min_qty_allowed)
         if min_qty_allowed > qty_available:
-            return "Minimum qty can't be greater than the qty available in store"
+            return "Minimum quantity can't be greater than the quantity available in store"
         if valid_category(category) != "Valid":
             return valid_category(category)
         prod = [x for x in products if x["name"] == name]
@@ -95,7 +95,7 @@ class SaleOrder():
             return "Product with id {} was not found in store.".format(prod_id)
         qty = prod[0]["quantity"]
         if quantity > qty:
-            return "Invalid quantity. Qty ordered must be less than {}(qty in store)".format(qty)
+            return "Invalid quantity. Quantity ordered must be less than {}(quantity in store)".format(qty)
         price = prod[0]["price"]
         id = len(sales) + 1
         total = price * quantity

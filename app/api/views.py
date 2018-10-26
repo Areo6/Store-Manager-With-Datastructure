@@ -37,11 +37,15 @@ def create_product():
         return json_msg(prod), 417
     return json_msg(prod), 201
 
-@mod.route("/api/v1/products/<int:id>", methods = ["GET"])
+@mod.route("/api/v1/products/<id>", methods = ["GET"])
 def get_product(id):
     """
     This endpoint allows the user fetch a specific product
     """
+    try:
+        id = int(id)
+    except(ValueError, TypeError):
+        return json_msg("Bad request. Id should be an integer"), 405
     if valid_id(id) != "Valid":
         return json_msg("Invalid Id. Must be a positive number"), 400
     prod = product.get_product(id)
@@ -79,11 +83,15 @@ def get_all_sales():
     """
     return json_msg(sale.get_all_sales()), 200
 
-@mod.route("/api/v1/sales/<int:id>", methods = ["GET"])
+@mod.route("/api/v1/sales/<id>", methods = ["GET"])
 def get_sale(id):
     """
     This endpoint allows the user to fetch a specific sale record
     """
+    try:
+        id = int(id)
+    except(ValueError, TypeError):
+        return json_msg("Invalid request. The Id must be an integer"), 405
     if valid_id(id) != "Valid":
         return json_msg(valid_id(id)), 400
     order = sale.get_sale_record(id)

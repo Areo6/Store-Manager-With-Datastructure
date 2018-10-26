@@ -66,6 +66,10 @@ class TestProducts(unittest.TestCase):
             "name": "LD1", "price": 450000, "quantity": 45,"min_quantity": 1, "category": ""
         }))
         self.assertEqual(response.status_code, 417)
+        response = self.app.post("/api/v1/products/me", content_type = "application/json", data = json.dumps({
+            "name": "LD1", "price": 450000, "quantity": 1,"min_quantity": 1, "category": "tvs"
+        }))
+        self.assertEqual(response.status_code, 405)
     
     def test_if_admin_tries_to_add_product_with_mising_or_more_fields(self):
         """

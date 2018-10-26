@@ -18,12 +18,12 @@ Store Manager is a web application that helps store owners manage sales and prod
 
  REQUEST | ROUTE | FUNCTIONALITY
  ------- | ----- | -------------
- **POST** | /products | Admin creates a new product
- **POST** | /Sales | Attendant creates new sale records
- **GET** | /products | Fetches all products
- **GET** | /products/< productId> | Fetches a specific product
- **GET** | /sales | Admin fetches all sale records
- **GET** | /sales/< productId> | Fetches a specific sale record
+ **POST** | /api/v1/products | Admin creates a new product
+ **POST** | /api/v1/Sales | Attendant creates new sale records
+ **GET** | /api/v1/products | Fetches all products
+ **GET** | /api/v1/products/< productId> | Fetches a specific product
+ **GET** | /api/v1/sales | Admin fetches all sale records
+ **GET** | /api/v1/sales/< productId> | Fetches a specific sale record
 
  ## BUIlT WITH
 

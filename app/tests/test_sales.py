@@ -58,6 +58,10 @@ class TestSales(unittest.TestCase):
             "product_id": 1, "quantity": "three", "at_name": "Eric"
         }))
         self.assertEqual(response.status_code, 417)
+        response = self.app.post("/api/v1/sales/l", content_type = "application/json", data = json.dumps({
+            "product_id": 1, "quantity": 4, "at_name": "Eric"
+        }))
+        self.assertEqual(response.status_code, 405)
     
     def test_if_user_tries_to_add_sale_record_with_mising_or_more_fields(self):
         """
