@@ -35,31 +35,31 @@ class TestSales(unittest.TestCase):
         This method tests if error message is returned when admin tries to add product with wrong data 
         """
         response = self.app.post("/api/v1/sales", content_type = "application/json", data = json.dumps({
-            "product_id": 0, "quantity": 1, "at_name": "Eric"
+            "product_id": 0, "quantity": 1, "attendant_name": "Eric"
         }))
         self.assertEqual(response.status_code, 417)
         response = self.app.post("/api/v1/sales", content_type = "application/json", data = json.dumps({
-            "product_id": "me", "quantity": 1, "at_name": "Eric"
+            "product_id": "me", "quantity": 1, "attendant_name": "Eric"
         }))
         self.assertEqual(response.status_code, 417)
         response = self.app.post("/api/v1/sales", content_type = "application/json", data = json.dumps({
-            "product_id": 1, "quantity": -9, "at_name": "Eric"
+            "product_id": 1, "quantity": -9, "attendant_name": "Eric"
         }))
         self.assertIn("Invalid quantity. Qty must be greater than 0",str(response.data))
         response = self.app.post("/api/v1/sales", content_type = "application/json", data = json.dumps({
-            "product_id": 1, "quantity": 1, "at_name": "Er"
+            "product_id": 1, "quantity": 1, "attendant_name": "Er"
         }))
         self.assertEqual(response.status_code, 417)
         response = self.app.post("/api/v1/sales", content_type = "application/json", data = json.dumps({
-            "product_id": 1, "quantity": 100, "at_name": "Eric"
+            "product_id": 1, "quantity": 100, "attendant_name": "Eric"
         }))
         self.assertEqual(response.status_code, 417)
         response = self.app.post("/api/v1/sales", content_type = "application/json", data = json.dumps({
-            "product_id": 1, "quantity": "three", "at_name": "Eric"
+            "product_id": 1, "quantity": "three", "attendant_name": "Eric"
         }))
         self.assertEqual(response.status_code, 417)
         response = self.app.post("/api/v1/sales/l", content_type = "application/json", data = json.dumps({
-            "product_id": 1, "quantity": 4, "at_name": "Eric"
+            "product_id": 1, "quantity": 4, "attendant_name": "Eric"
         }))
         self.assertEqual(response.status_code, 405)
     
@@ -72,7 +72,7 @@ class TestSales(unittest.TestCase):
         }))
         self.assertIn("Insuficiant number of inputs. please make sure all the fields are included", str(response.data))
         response = self.app.post("/api/v1/sales", content_type = "application/json", data = json.dumps({
-            "product_id": 1, "quantity": 1, "at_name": "Eric", "other": 2
+            "product_id": 1, "quantity": 1, "attendant_name": "Eric", "other": 2
         }))
         self.assertEqual(response.status_code, 414)
     
@@ -93,7 +93,7 @@ class TestSales(unittest.TestCase):
             "name": "LD2", "price": 400000, "quantity": 45,"min_quantity": 1, "category": "TVs"
         }))
         response = self.app.post("/api/v1/sales", content_type = "application/json", data = json.dumps({
-            "product_id": 1, "quantity": 1, "at_name": "Eric"
+            "product_id": 1, "quantity": 1, "attendant_name": "Eric"
         }))
         self.assertEqual(response.status_code, 201)
     

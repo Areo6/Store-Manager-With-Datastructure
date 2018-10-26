@@ -69,9 +69,9 @@ def create_sale_order():
         return json_msg("Insuficiant number of inputs. please make sure all the fields are included"), 400
     if len(data) > 3:
         return json_msg("Too many arguments. only product_id, quantity and attendant_name are required"), 414
-    if not "product_id" in data or not "quantity" in data or not "at_name" in data: 
+    if not "product_id" in data or not "quantity" in data or not "attendant_name" in data: 
         return json_msg("Please make sure product_id, quantity and attendant_name are included int he request")
-    order = sale.add_sale_order(data["product_id"], data["quantity"], data["at_name"])
+    order = sale.add_sale_order(data["product_id"], data["quantity"], data["attendant_name"])
     if order != "Successfully added sale order":
         return json_msg(order), 417
     return json_msg(order), 201
