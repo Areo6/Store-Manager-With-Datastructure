@@ -14,8 +14,8 @@ sales = [{
             "product_id": 1,
             "price": 500000,
             "quantity": 5,
-            "total": 2500000,
-            "at_name": "Malaba"
+            "total_amount": 2500000,
+            "attendant_name": "Malaba"
         }]
 
 class Products():
@@ -104,8 +104,8 @@ class SaleOrder():
             "product_id": prod_id,
             "price": price,
             "quantity": quantity,
-            "total": total,
-            "at_name": attendant_name
+            "total_amount": total,
+            "attendant_name": attendant_name
         }
         sales.append(order)
         return "Successfully added sale order"
