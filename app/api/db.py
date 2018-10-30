@@ -1,5 +1,6 @@
 import os
 import psycopg2
+import psycopg2.extras as ex
 from pprint import pprint
 from urllib.parse import urlparse
 
@@ -21,7 +22,7 @@ class Database():
             print(os.getenv('APP_SETTINGS'))
             self.conn = psycopg2.connect(dbname=self.db, user='postgres', host = 'localhost', password='postgres', port=5432)
             self.conn.autocommit = True
-            self.cur = self.conn.cursor()
+            self.cur = self.conn.cursor(cursor_factory=ex.RealDictCursor)
         except:
             pprint("Database error")
     

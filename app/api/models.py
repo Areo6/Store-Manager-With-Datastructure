@@ -28,8 +28,6 @@ class Products():
         query = ("""SELECT * FROM products;""" )
         cursor.execute(query)
         products = cursor.fetchall()
-        # if len(Products) == 0:
-        #     return "Oops. It's still lonely here. No products yet"
         return products
     
     def get_product(self, id):
