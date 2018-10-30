@@ -1,33 +1,35 @@
 from api.validation import *
+from api.db import Database
 
 
-products = [{
-            "id": 1,
-            "name": "LDC1",
-            "price": 500000,
-            "quantity": 56,
-            "min_quantity": 1,
-            "category": "Televisions"
-        }]
-sales = [{
-            "id": 1,
-            "product_id": 1,
-            "price": 500000,
-            "quantity": 5,
-            "total_amount": 2500000,
-            "attendant_name": "Malaba"
-        }]
+db = Database()
+cursor = db.cur
 
 class Products():
     """
     This class deals with all the product's manipulations
     """
+    def is_existing_product(self,product_name):
+        """
+        This method checks if a product with the given name already exists in the database
+        """
+        query = ("""SELECT * FROM products WHERE product_name = '{}'""".format(product_name))
+        cursor.execute(query)
+        product = cursor.fetchone();
+        if product:
+            return True
+        else:
+            return False
+    
     def get_all_products(self):
         """
         This method is used by the admin to view all the products in store
         """
-        if len(products) == 0:
-            return "It's lonely here. There are no products yet"
+        query = ("""SELECT * FROM products;""" )
+        cursor.execute(query)
+        products = cursor.fetchall()
+        # if len(Products) == 0:
+        #     return "Oops. It's still lonely here. No products yet"
         return products
     
     def get_product(self, id):
@@ -36,14 +38,14 @@ class Products():
         """
         if valid_id(id) != "Valid":
             return valid_id(id)
-        if len(products) == 0:
-            return "It's lonely here. There are no products yet"
-        prod = [x for x in products if x["id"] == id]
-        if len(prod) == 0:
+        query = ("""SELECT * FROM products WHERE product_id = '{}'""".format(id))
+        cursor.execute(query)
+        product = cursor.fetchone()
+        if not product:
             return "Product with id {} not found. put a valid id".format(id)
-        return prod[0]
+        return product
 
-    def add_product(self, name, price, qty_available, min_qty_allowed, category):
+    def add_product(self, name, price, qty_available, min_qty_allowed):
         """
         This hemethod is used by the admin to add a product in the store
         """
@@ -57,21 +59,13 @@ class Products():
             return valid_quantity(min_qty_allowed)
         if min_qty_allowed > qty_available:
             return "Minimum quantity can't be greater than the quantity available in store"
-        if valid_category(category) != "Valid":
-            return valid_category(category)
-        prod = [x for x in products if x["name"] == name]
-        if len(prod) != 0:
+        query = ("""SELECT product_name FROM products;""")
+        cursor.execute(query)
+        product = cursor.fetchone()
+        if product:
             return "Product with name {} already exists. Choose another name".format(name)
-        id = len(products) + 1
-        product = {
-            "id": id,
-            "name": name,
-            "price": price,
-            "quantity": qty_available,
-            "min_quantity": min_qty_allowed,
-            "category": category
-        }
-        products.append(product)
+        query = ("""INSERT INTO products (product_name, price, quantity, min_qty_allowed) VALUES('{}', '{}', '{}', '{}')""".format(name, price, qty_available, min_qty_allowed))
+        cursor.execute(query)
         return "Successfully added product"
 
 class SaleOrder():

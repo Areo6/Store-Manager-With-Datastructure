@@ -1,4 +1,4 @@
-from flask import Blueprint, request, json
+from flask import Blueprint, request, json, jsonify
 from api.validation import valid_id, json_msg
 from api.models import Products, SaleOrder
 
@@ -6,6 +6,10 @@ from api.models import Products, SaleOrder
 mod = Blueprint("api", __name__)
 product = Products()
 sale = SaleOrder()
+
+@mod.route("/")
+def index():
+    return jsonify({"Message": "This is to test my database"})
 
 @mod.route("/api/v1/products", methods = ["GET"])
 def get_products():
@@ -26,13 +30,14 @@ def create_product():
     data = request.get_json(force=True)
     if not data:
         return json_msg("Bad request, your request should be a dictionary"), 400
-    if len(data) < 5:
+    print(len(data))
+    if len(data) < 4:
         return json_msg("Insuficiant number of inputs. make sure all the fields are inluded"),400
-    if len(data) > 5:
+    if len(data) > 4:
         return json_msg("Too many arguments. Only name, price, quantity, quantity_allowed, and category are required"), 414
-    if not "name" in data or not "price" in data or not "quantity" in data or not "min_quantity" in data or not "category" in data:
-        return json_msg("Pease make sure name, price, quantity, quantity_allowed, and category are in the request"), 400
-    prod = product.add_product(data["name"],data["price"],data["quantity"], data["min_quantity"], data["category"])
+    if not "product_name" in data or not "price" in data or not "quantity" in data or not "min_qty_allowed" in data:
+        return json_msg("Pease make sure name, price, quantity, quantity_allowed are in the request"), 400
+    prod = product.add_product(data["product_name"],data["price"],data["quantity"], data["min_qty_allowed"])
     if prod != "Successfully added product":
         return json_msg(prod), 417
     return json_msg(prod), 201
