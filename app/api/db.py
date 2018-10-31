@@ -34,14 +34,11 @@ class Database():
         commands = (
             """CREATE TABLE IF NOT EXISTS users(
                 user_id SERIAL PRIMARY KEY,
-                username VARCHAR(80) NOT NULL,
+                username VARCHAR(30) NOT NULL,
                 email VARCHAR(30) NOT NULL,
                 password VARCHAR(30) NOT NULL,
-                user_role SMALLINT NOT NULL,
-                FOREIGN KEY (user_role)
-                REFERENCES roles (role_id)
-                ON UPDATE CASCADE ON DELETE CASCADE
-                )""",
+                user_role VARCHAR(10) NOT NULL
+            )""",
             """CREATE TABLE IF NOT EXISTS products(
                 product_id SERIAL PRIMARY KEY,
                 product_name VARCHAR(20) NOT NULL,
@@ -57,9 +54,16 @@ class Database():
                 REFERENCES products (product_id)
                 ON UPDATE CASCADE ON DELETE CASCADE
             )""",
-            """CREATE TABLE IF NOT EXISTS roles(
-                role_id SERIAL PRIMARY KEY,
-                name VARCHAR(10) NOT NULL
+            """CREATE TABLE IF NOT EXISTS sales(
+                sale_id SERIAL PRIMARY KEY,
+                product_id SMALLINT NOT NULL,
+                price INTEGER NOT NULL,
+                quantity INTEGER NOT NULL,
+                total_amount INTEGER NOT NULL,
+                attendant_name VARCHAR(30) NOT NULL,
+                FOREIGN KEY (sale_id)
+                REFERENCES products (product_id)
+                ON UPDATE CASCADE ON DELETE CASCADE
             )"""
         )
         for command in commands:
