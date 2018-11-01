@@ -18,7 +18,7 @@ def user_validation(username, email, password, user_role):
         return is_password(email)
     if is_valid_password(password) != "Valid":
         return is_valid_password(password)
-    if is_valid_role(user_role):
+    if is_valid_role(user_role) != "Valid":
         return is_valid_role(user_role)
     query = ("""SELECT username FROM users WHERE username = '{}'""".format(username))
     cursor.execute(query)
@@ -26,11 +26,7 @@ def user_validation(username, email, password, user_role):
     if name:
         return "Name {} alredy taken. Please choose a different one".format(username)
     return "Valid"
-    # if is_user_exist:
-    #     return "Name {} alredy taken. Please choose a different one".format(username)
-    # if is_email_exist:
-    #     return "Email {} already taken. Please choose a different one".format(email)    
-    # return "Valid"
+
 def user_can_login(username, password):
     """
     This function checks if the user prpovided valid data to login
@@ -58,6 +54,7 @@ def is_email_exist(email):
         return True
     else:
         return False
+
 def single_user(username):
     """
     This function is used to fetch a single sale
@@ -66,6 +63,22 @@ def single_user(username):
     cursor.execute(query)
     id = cursor.fetchone()
     query = ("""SELECT username FROM users WHERE username = '{}'""".format(username))
+    cursor.execute(query)
+    name = cursor.fetchone()
+    attendant = {
+        "user_id": id["user_id"],
+        "username": name["username"]
+    }
+    return attendant
+
+def single_usr(user_id):
+    """
+    This function is used to fetch a single sale
+    """
+    query = ("""SELECT user_id FROM users WHERE user_id = '{}'""".format(user_id))
+    cursor.execute(query)
+    id = cursor.fetchone()
+    query = ("""SELECT username FROM users WHERE user_id = '{}'""".format(user_id))
     cursor.execute(query)
     name = cursor.fetchone()
     attendant = {
@@ -94,6 +107,28 @@ def product_validation(name, price, qty_available, min_qty_allowed):
         if product:
             return "Product with name {} already exists. Choose another name".format(name)
         return "Valid"
+
+def product_update_validation(id,name, price, qty_available, min_qty_allowed):
+        """
+        This function is used to validate a product
+        """
+        query = ("""SELECT * FROM products WHERE product_id = '{}'""".format(id))
+        cursor.execute(query)
+        product = cursor.fetchone()
+        if not product:
+            return "Product with id {} does not exist. Choose another one".format(id)
+        if valid_name(name) != "Valid":
+            return valid_name(name)
+        if valid_price(price) != "Valid":
+            return valid_price(price)
+        if valid_quantity(qty_available) != "Valid":
+            return valid_quantity(qty_available)
+        if valid_quantity(min_qty_allowed) != "Valid":
+            return valid_quantity(min_qty_allowed)
+        if min_qty_allowed > qty_available:
+            return "Minimum quantity can't be greater than the quantity available in store"
+        return "Valid"    
+
 def single_product(product_name):
     """
     This function is used to fetch a single product
@@ -102,6 +137,22 @@ def single_product(product_name):
     cursor.execute(query)
     id = cursor.fetchone()
     query = ("""SELECT product_name FROM products WHERE product_name = '{}'""".format(product_name))
+    cursor.execute(query)
+    name = cursor.fetchone()
+    product = {
+        "product_id": id["product_id"],
+        "name": name["product_name"]
+    }
+    return product
+
+def single_product_by_id(product_id):
+    """
+    This function is used to fetch a single product
+    """
+    query = ("""SELECT product_id FROM products WHERE product_id = '{}'""".format(product_id))
+    cursor.execute(query)
+    id = cursor.fetchone()
+    query = ("""SELECT product_name FROM products WHERE product_id = '{}'""".format(product_id))
     cursor.execute(query)
     name = cursor.fetchone()
     product = {
@@ -135,7 +186,7 @@ def get_product_id_validation(id):
     product = produc.get_product(id)
     if not product:
         return "Product with id {} not found. put a valid id".format(id)
-    return "Valid"
+    return "Valid" 
 
 def sale_validation(product_id, quantity, attendant_name):
         """

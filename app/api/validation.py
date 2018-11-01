@@ -24,7 +24,7 @@ def is_valid_role(user_role):
         return valid_name(user_role)
     if user_role == "admin" or user_role == "attendant":
         return "Valid"
-    return "Invalid"
+    return "Invalid User Role. Role should be either admin or attendant"
     
 def is_valid_email(email):
     """

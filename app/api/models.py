@@ -32,6 +32,14 @@ class User():
         cursor.execute(query)
         user = cursor.fetchone()
         return user
+    
+    def update_user_role(seld,user_id, user_role):
+        """
+        This method allows the admin to grant the attend the admin rights
+        """
+        query = ("""UPDATE users SET (user_role) = ('{}') WHERE user_id = '{}'""".format(user_role, user_id))
+        cursor.execute(query)
+        return "Successfully updated user role"
 
 class Products():
     """
@@ -62,6 +70,23 @@ class Products():
         query = ("""INSERT INTO products (product_name, price, quantity, min_qty_allowed) VALUES('{}', '{}', '{}', '{}')""".format(name, price, qty_available, min_qty_allowed))
         cursor.execute(query)
         return "Successfully added product"
+    
+    def update_product(self, name, price, qty_available, min_qty_allowed):
+        """
+        This method allows for updating or editing a product
+        """
+        query = ("""UPDATE products SET (product_name, price, quantity, min_qty_allowed) = ('{0}', {1}, {2}, {3}) WHERE product_name = '{4}'""".format(name,price, qty_available, min_qty_allowed, name))
+        cursor.execute(query)
+        return "Product successfully updated"
+
+    def delete_product(self, product_id):
+        """
+        This method allows the the admin user to delete a product given the product name
+        """
+        query = ("""DELETE FROM products WHERE product_id = '{}'""".format(product_id))
+        cursor.execute(query)
+        return "Successfully deleted product"
+
 
 class SaleOrder():
     """
