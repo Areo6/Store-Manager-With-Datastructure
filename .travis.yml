@@ -8,14 +8,13 @@ services:
 
 env:
   global:
-    - APP_SETTINGS=test_db
+    - APP_SETTINGS='test_db'
 
 install:
   - pip install -r requirements.txt
 
 before script:
   - psql -c 'createdb test_db;' -U postgres
-  - psql -c 'createdb storemanager;' -U postgres
 
 script:
   - python3 -m pytest --cov app/
