@@ -3,6 +3,7 @@ import psycopg2
 import psycopg2.extras as ex
 from pprint import pprint
 from urllib.parse import urlparse
+# import pprint
 
 
 class Database():
@@ -31,17 +32,15 @@ class Database():
         This method populates the database with tables
         """
         pprint("Database connected")
+        pprint(self.db)
         commands = (
             """CREATE TABLE IF NOT EXISTS users(
                 user_id SERIAL PRIMARY KEY,
-                username VARCHAR(80) NOT NULL,
+                username VARCHAR(30) NOT NULL,
                 email VARCHAR(30) NOT NULL,
                 password VARCHAR(30) NOT NULL,
-                user_role SMALLINT NOT NULL,
-                FOREIGN KEY (user_role)
-                REFERENCES roles (role_id)
-                ON UPDATE CASCADE ON DELETE CASCADE
-                )""",
+                user_role VARCHAR(10) NOT NULL
+            )""",
             """CREATE TABLE IF NOT EXISTS products(
                 product_id SERIAL PRIMARY KEY,
                 product_name VARCHAR(20) NOT NULL,
@@ -49,17 +48,16 @@ class Database():
                 quantity INTEGER NOT NULL,
                 min_qty_allowed INTEGER NOT NULL
             )""",
-            """CREATE TABLE IF NOT EXISTS categories(
-                category_id SERIAL PRIMARY KEY,
-                category VARCHAR(20) NOT NULL,
+            """CREATE TABLE IF NOT EXISTS sales(
+                sale_id SERIAL PRIMARY KEY,
                 product_id SMALLINT NOT NULL,
-                FOREIGN KEY (product_id)
+                price INTEGER NOT NULL,
+                quantity INTEGER NOT NULL,
+                total_amount INTEGER NOT NULL,
+                attendant_name VARCHAR(30) NOT NULL,
+                FOREIGN KEY (sale_id)
                 REFERENCES products (product_id)
                 ON UPDATE CASCADE ON DELETE CASCADE
-            )""",
-            """CREATE TABLE IF NOT EXISTS roles(
-                role_id SERIAL PRIMARY KEY,
-                name VARCHAR(10) NOT NULL
             )"""
         )
         for command in commands:
@@ -67,3 +65,25 @@ class Database():
                 self.cur.execute(command)
             except(Exception, psycopg2.DatabaseError) as error:
                 pprint(error)
+
+    def create_admin(self):
+        """
+        This method create the admin user as a default user in the database
+        """
+        adm = ("""SELECT username FROM users;""")
+        self.cur.execute(adm)
+        user = self.cur.fetchone()
+        if not user:
+            query = ("""INSERT INTO users (username, email, password, user_role ) VALUES ('{}', '{}', '{}', '{}')""".format('malaba', 'malaba@admin.com', 'malaba', 'admin'))
+            self.cur.execute(query) 
+
+    def delete_tables(self):
+        queries = ("""DROP TABLE IF EXISTS users CASCADE""",
+            """
+			DROP TABLE IF EXISTS products CASCADE
+			""",
+            """
+            DROP TABLE IF EXISTS sales CASCADE
+            """)
+        for query in queries:
+            self.cur.execute(query)

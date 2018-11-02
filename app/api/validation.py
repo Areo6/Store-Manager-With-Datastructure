@@ -1,5 +1,50 @@
 from flask import jsonify
+import re
+import string
 
+
+def is_valid_username(username):
+    """
+    This function checks the validity of the input Name.
+    """
+    if not isinstance(username, str):
+        return "Bad input. Name should be a string"
+    if len(username.strip()) == 0:
+        return "Name can't be empty. Please enter a valid name"
+    elif len(username.strip()) < 3:
+        return "Invalid Name. Name must be at least 3 characters"
+    pattern = re.match('^[^.]*[a-zA-Z]$', username)
+    if not pattern:
+        return "Invalid Name. Name must not contain special characters"
+    else:
+        return "Valid"
+
+def is_valid_role(user_role):
+    if valid_name(user_role) != "Valid":
+        return valid_name(user_role)
+    if user_role == "admin" or user_role == "attendant":
+        return "Valid"
+    return "Invalid User Role. Role should be either admin or attendant"
+    
+def is_valid_email(email):
+    """
+    This function checks the validity of email.
+    """
+    is_valid = re.search(r"[\w-]+@[\w-]+\.+", email)
+    if not is_valid:
+        return "Invalid email. Email should be of format 'john12@gmail.com'"
+    else:
+        return "Valid"
+
+def is_valid_password(password):
+    """
+    This function checks the validity of a password
+    """
+    if not isinstance(password, str):
+        return "Invalid input. Password must be a string of characters"
+    if len(password) < 6:
+        return "Invalid password. Password must be at least 6 characters long"
+    return "Valid"
 
 def valid_name(name):
     """
@@ -56,8 +101,31 @@ def valid_id(id):
         return "Invalid id. Id must be a positive number"
     return "Valid"
 
-def json_msg(msg):
+def json_er(msg):
+    """
+    This method returns an error message in json format
+    """
+    return jsonify({"Error": msg})
+
+def json_msg(msg, some, data):
     """
     This method returns a message in json format
     """
-    return jsonify({"Message": msg})
+    return jsonify({
+        "Message": msg,
+        some: data,
+    })
+
+def json_mesage(data):
+    return jsonify({
+        "User": data
+    })
+
+def json_ms(msg):
+    return jsonify({"Message" : msg})
+
+def json_mesages(msg, data):
+    return jsonify({
+        msg: data
+    })
+    
