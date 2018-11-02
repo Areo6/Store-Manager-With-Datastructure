@@ -7,6 +7,11 @@ db = Database()
 cursor = db.cur
 produc = Products()
 sale_order = SaleOrder()
+users = User()
+
+def fetch_user(username):
+    usr = users.search_user_name(username)
+    return usr
 
 def user_validation(username, email, password, user_role):
     """
@@ -127,6 +132,11 @@ def product_update_validation(id,name, price, qty_available, min_qty_allowed):
             return valid_quantity(min_qty_allowed)
         if min_qty_allowed > qty_available:
             return "Minimum quantity can't be greater than the quantity available in store"
+        query = ("""SELECT product_name FROM products WHERE product_name = '{}'""".format(name))
+        cursor.execute(query)
+        product = cursor.fetchone()
+        if product:
+            return "Product with name {} already exists. Choose another name".format(name)
         return "Valid"    
 
 def single_product(product_name):
@@ -185,7 +195,7 @@ def get_product_id_validation(id):
             return valid_id(id)
     product = produc.get_product(id)
     if not product:
-        return "Product with id {} not found. put a valid id".format(id)
+        return "Product with id {} not found".format(id)
     return "Valid" 
 
 def sale_validation(product_id, quantity, attendant_name):
@@ -202,7 +212,7 @@ def sale_validation(product_id, quantity, attendant_name):
         cursor.execute(query)
         product = cursor.fetchone()
         if not product:
-            return "Product with id {} does not exist. Please Choose a valid id".format(name)
+            return "Product with id {} does not exist"
         return "Valid"
 
 def is_products_empty():

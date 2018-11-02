@@ -2,6 +2,8 @@ from flask import Blueprint, request, json, jsonify
 from api.validation import *
 from api.models import Products, SaleOrder
 from api.model_helper import *
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+import datetime
 
 
 mod = Blueprint("api", __name__)
@@ -10,10 +12,14 @@ sale = SaleOrder()
 user = User()
 
 @mod.route("/api/v2/auth/signup", methods = ["POST"])
+@jwt_required
 def create_attendant():
     """
     This endpoint is user by the admin to create an attendant
     """
+    role = get_jwt_identity()["user_role"]
+    if role != "admin":
+        return json_mesages("Access denied","Ask your administrator the right to access these resources")
     try:
         json.loads(request.get_data())
     except (ValueError, TypeError):
@@ -43,7 +49,7 @@ def login():
     try:
         json.loads(request.get_data())
     except (ValueError, TypeError):
-        return json_er("Bad request, your request should be in a dictionary format"), 400
+        return json_mesages("Bad request, your request should be in a dictionary format"), 400
     data = request.get_json(force=True)
     if not data:
         return json_er("Bad request, your request should be in a dictionary format"), 400
@@ -60,15 +66,17 @@ def login():
     if is_user_exist(data["username"]):
         existing_user = user.login(data["username"])
         if existing_user["password"] == data["password"]:
-            token =  jsonify({
-                "token": "My token",
-                "Message": "User successfully login"
-            }), 201
-            return token
-        return json_er("Wrong password. Please try again")
-    return json_er("User with name {} does not have an account. Please ask your admin to create one")
+            usr = fetch_user(data["username"])
+            access_token = create_access_token(identity=usr, expires_delta=datetime.timedelta(days=1))
+            return jsonify({
+                "token": access_token,
+                "message": "User successfully login"
+            }), 200
+        return json_er("Wrong password. Please try again"), 401
+    return json_er("User with name {} does not have an account. Please ask your admin to create one"), 401
 
 @mod.route("/api/v2/users/<id>", methods = ["PUT"])
+@jwt_required
 def update_user_role(id):
     try:
         id = int(id)
@@ -97,19 +105,24 @@ def update_user_role(id):
     
 
 @mod.route("/api/v2/products", methods = ["GET"])
+@jwt_required
 def get_products():
     """
     This endpoint allows the user to fetch all products
     """
     if is_products_empty():
-            return json_ms("Oops! There no product added yet"), 200
-    return json_msgs(product.get_all_products()), 200
+        return json_ms("Oops! There are no products added yet"), 200
+    return json_mesages("Users", product.get_all_products()), 200
 
 @mod.route("/api/v2/products", methods = ["POST"])
+@jwt_required
 def create_product():
     """
     This endpoint is allows the admin to add a new product to the store
     """
+    role = get_jwt_identity()["user_role"]
+    if role != "admin":
+        return json_mesages("Access denied","Ask your administrator the right to access these resources")
     try:
         json.loads(request.get_data())
     except (ValueError, TypeError):
@@ -132,16 +145,20 @@ def create_product():
     return json_msg(prod, "Product", product_added), 201
 
 @mod.route("/api/v2/products/<id>", methods = ["PUT"])
+@jwt_required
 def update_a_product(id):
     """
     This endpoint is allows the admin to update a new product given the product id
     """
+    role = get_jwt_identity()["user_role"]
+    if role != "admin":
+        return json_mesages("Access denied","Ask your administrator the right to access these resources")
     try:
         id = int(id)
     except(ValueError, TypeError):
         return json_er("Bad request. Id should be an integer"), 405
     if valid_id(id) != "Valid":
-        return json_er("Invalid Id. Must be a positive number"), 400
+        return json_er("Invalid Id. Id Must be a positive number"), 400
     try:
         json.loads(request.get_data())
     except (ValueError, TypeError):
@@ -158,15 +175,19 @@ def update_a_product(id):
     prod_validation = product_update_validation(id, data["product_name"],data["price"],data["quantity"], data["min_qty_allowed"])
     if prod_validation != "Valid":
         return json_er(prod_validation), 417
-    prod = product.update_product(data["product_name"],data["price"],data["quantity"], data["min_qty_allowed"])
-    product_added = single_product(data["product_name"])
+    prod = product.update_product(id,data["product_name"],data["price"],data["quantity"], data["min_qty_allowed"])
+    product_added = single_product_by_id(id)
     return json_msg(prod, "Product", product_added), 202
 
 @mod.route("/api/v2/products/<id>", methods = ["GET"])
+@jwt_required
 def get_product(id):
     """
     This endpoint allows the user fetch a specific product
     """
+    role = get_jwt_identity()["user_role"]
+    if role != "attendant":
+        return json_mesages("Access denied","Ask your administrator the right to access these resources")
     try:
         id = int(id)
     except(ValueError, TypeError):
@@ -179,10 +200,14 @@ def get_product(id):
     return json_mesage(product.get_product(id)), 200
 
 @mod.route("/api/v2/products/<id>", methods = ["DELETE"])
+@jwt_required
 def delete_product(id):
     """
     This  endpoint allows the admin to delete a product given the product ID
     """
+    role = get_jwt_identity()["user_role"]
+    if role != "admin":
+        return json_mesages("Access denied","Ask your administrator the right to access these resources")
     try:
         id = int(id)
     except(ValueError, TypeError):
@@ -197,10 +222,14 @@ def delete_product(id):
     return json_msg(delete, "Product", deleted_product)
 
 @mod.route("/api/v2/sales", methods = ["POST"])
+@jwt_required
 def create_sale_order():
     """
     This endpoint allows the store attendant to create a sale record
     """
+    role = get_jwt_identity()["user_role"]
+    if role != "attendant":
+        return json_mesages("Access denied","Ask your administrator the right to access these resources")
     try:
         json.loads(request.get_data())
     except (ValueError, TypeError):
@@ -222,15 +251,20 @@ def create_sale_order():
     return json_msg(order, "Sale", order_added), 201
 
 @mod.route("/api/v2/sales", methods = ["GET"])
+@jwt_required
 def get_all_sales():
     """
     This enpoint allows the owner/admin to view all sales records available
     """
+    role = get_jwt_identity()["user_role"]
+    if role != "admin":
+        return json_mesages("Access denied","Ask your administrator the right to access these resources")
     if is_sales_empty():
         return json_ms("Oh oh! It looks like there is are no sale orders made yet"), 200
     return json_mesages("Sales", sale.get_all_sales()), 200
 
 @mod.route("/api/v2/sales/<id>", methods = ["GET"])
+@jwt_required
 def get_sale(id):
     """
     This endpoint allows the user to fetch a specific sale record

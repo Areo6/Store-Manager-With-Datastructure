@@ -5,6 +5,7 @@ from api.db import Database
 db = Database()
 cursor = db.cur
 
+
 class User():
     """
     This is class creates a new user and is responsible for all user operations
@@ -69,21 +70,21 @@ class Products():
         """
         query = ("""INSERT INTO products (product_name, price, quantity, min_qty_allowed) VALUES('{}', '{}', '{}', '{}')""".format(name, price, qty_available, min_qty_allowed))
         cursor.execute(query)
-        return "Successfully added product"
+        return "Successfully Added attendant"
     
-    def update_product(self, name, price, qty_available, min_qty_allowed):
+    def update_product(self,id, product_name, price, qty_available, min_qty_allowed):
         """
         This method allows for updating or editing a product
         """
-        query = ("""UPDATE products SET (product_name, price, quantity, min_qty_allowed) = ('{0}', {1}, {2}, {3}) WHERE product_name = '{4}'""".format(name,price, qty_available, min_qty_allowed, name))
+        query = ("""UPDATE products SET product_name='{}', price='{}', quantity='{}', min_qty_allowed='{}' WHERE product_id = '{}'""".format(product_name,price, qty_available, min_qty_allowed, id))
         cursor.execute(query)
-        return "Product successfully updated"
+        return "Successfully updated product"
 
     def delete_product(self, product_id):
         """
         This method allows the the admin user to delete a product given the product name
         """
-        query = ("""DELETE FROM products WHERE product_id = '{}'""".format(product_id))
+        query = ("""DELETE FROM products WHERE product_id = '{}' CASCADE""".format(product_id))
         cursor.execute(query)
         return "Successfully deleted product"
 
@@ -101,7 +102,9 @@ class SaleOrder():
         price = cursor.fetchone()
         price = price["price"]
         total_amount = price * quantity
-        query = ("""INSERT INTO sales (product_id, price, quantity, total_amount, attendant_name) VALUES('{}', '{}', '{}', '{}', '{}')""".format(product_id, price, quantity, total_amount, attendant_name))
+        query = ("""INSERT INTO sales (product_id, price, quantity, total_amount,\
+         attendant_name) VALUES('{}', '{}', '{}', '{}', '{}')""".format(product_id,\
+          price, quantity, total_amount, attendant_name))
         cursor.execute(query)
         return "Successfully added sale order"
 

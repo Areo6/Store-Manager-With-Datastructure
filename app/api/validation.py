@@ -45,20 +45,6 @@ def is_valid_password(password):
     if len(password) < 6:
         return "Invalid password. Password must be at least 6 characters long"
     return "Valid"
-    # upper, lower, symbol, digit = False, False, False, False
-    # for char in password:
-    #     if char in string.ascii_uppercase:
-    #         upper = True
-    #     elif char in string.ascii_lowercase:
-    #         lower = True
-    #     elif char in string.digits:
-    #         digit = True
-        # elif char in string.punctuation + ' \t\r\x0b\x0c':
-        #     symbol = True
-    # if upper == True and lower == True and digit == True:
-        
-    # else:
-    #     return "Weak password. Password must contain at least one upper case, lower case and a special caracter"
 
 def valid_name(name):
     """
@@ -142,3 +128,4 @@ def json_mesages(msg, data):
     return jsonify({
         msg: data
     })
+    
