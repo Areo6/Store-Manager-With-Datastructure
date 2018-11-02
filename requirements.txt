@@ -30,7 +30,6 @@ PyJWT==1.6.4
 pylint==2.1.1
 pytest==3.9.1
 pytest-cov==2.6.0
-python-dotenv==0.9.1
 requests==2.20.0
 six==1.11.0
 typed-ast==1.1.0
