@@ -15,6 +15,7 @@ install:
 
 before script:
   - psql -c 'createdb test_db;' -U postgres
+  - psql -c 'createdb storemanager;' -U postgres
 
 script:
   - python3 -m pytest --cov app/
