@@ -3,7 +3,7 @@ from os import path
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 from app.api import *
 from flask import Flask
-from api.views import mod
+from app.api.views import mod
 from flask_jwt_extended import JWTManager
 
 
