@@ -1,7 +1,7 @@
 from flask import Blueprint, request, json, jsonify
-from app.api.validation import *
-from app.api.models import Products, SaleOrder
-from app.api.model_helper import *
+from .validation import *
+from .models import Products, SaleOrder
+from .model_helper import *
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 import datetime
 
