@@ -70,7 +70,7 @@ class Products():
         """
         query = ("""INSERT INTO products (product_name, price, quantity, min_qty_allowed) VALUES('{}', '{}', '{}', '{}')""".format(name, price, qty_available, min_qty_allowed))
         cursor.execute(query)
-        return "Successfully Added attendant"
+        return "Successfully Added Product"
     
     def update_product(self,id, product_name, price, qty_available, min_qty_allowed):
         """
@@ -84,7 +84,7 @@ class Products():
         """
         This method allows the the admin user to delete a product given the product name
         """
-        query = ("""DELETE FROM products WHERE product_id = '{}' CASCADE""".format(product_id))
+        query = ("""DELETE FROM products WHERE product_id = '{}'""".format(product_id))
         cursor.execute(query)
         return "Successfully deleted product"
 
@@ -102,9 +102,7 @@ class SaleOrder():
         price = cursor.fetchone()
         price = price["price"]
         total_amount = price * quantity
-        query = ("""INSERT INTO sales (product_id, price, quantity, total_amount,\
-         attendant_name) VALUES('{}', '{}', '{}', '{}', '{}')""".format(product_id,\
-          price, quantity, total_amount, attendant_name))
+        query = ("""INSERT INTO sales (product_id, price, quantity, total_amount, attendant_name) VALUES('{}', '{}', '{}', '{}', '{}')""".format(product_id, price, quantity, total_amount, attendant_name))
         cursor.execute(query)
         return "Successfully added sale order"
 

@@ -112,7 +112,7 @@ def get_products():
     """
     if is_products_empty():
         return json_ms("Oops! There are no products added yet"), 200
-    return json_mesages("Users", product.get_all_products()), 200
+    return json_mesages("Products", product.get_all_products()), 200
 
 @mod.route("/api/v2/products", methods = ["POST"])
 @jwt_required
@@ -122,7 +122,7 @@ def create_product():
     """
     role = get_jwt_identity()["user_role"]
     if role != "admin":
-        return json_mesages("Access denied","Ask your administrator the right to access these resources")
+        return json_mesages("Access denied","You have nono right to ")
     try:
         json.loads(request.get_data())
     except (ValueError, TypeError):
@@ -185,9 +185,6 @@ def get_product(id):
     """
     This endpoint allows the user fetch a specific product
     """
-    role = get_jwt_identity()["user_role"]
-    if role != "attendant":
-        return json_mesages("Access denied","Ask your administrator the right to access these resources")
     try:
         id = int(id)
     except(ValueError, TypeError):
@@ -197,7 +194,7 @@ def get_product(id):
     product_validation = get_product_id_validation(id)
     if product_validation != "Valid":
         return json_er(product_validation), 404
-    return json_mesage(product.get_product(id)), 200
+    return json_mesages("Product",product.get_product(id)), 200
 
 @mod.route("/api/v2/products/<id>", methods = ["DELETE"])
 @jwt_required
@@ -229,7 +226,7 @@ def create_sale_order():
     """
     role = get_jwt_identity()["user_role"]
     if role != "attendant":
-        return json_mesages("Access denied","Ask your administrator the right to access these resources")
+        return json_mesages("Access denied","You have no rights to access these resources"), 409
     try:
         json.loads(request.get_data())
     except (ValueError, TypeError):
