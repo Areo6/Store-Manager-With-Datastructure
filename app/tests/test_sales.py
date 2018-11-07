@@ -1,112 +1,102 @@
-# import unittest
-# from app import app
-# from api.views import *
-# from flask import json
+from flask import json, jsonify
+from app import app
+import unittest
+from api.db import Database
 
 
-# class TestSales(unittest.TestCase):
-#     """
-#     This class is used test all trafics on products
-#     """
-#     def setUp(self):
-#         """
-#         This method initializes the flask test client that's gonna help us test endpoints on a no-live server
-#         """
-#         self.app = app.test_client()
+db = Database()
 
-#     def test_return_msg_if_user_try_to_fetch_all_sale_records_when_empty(self):
-#         """
-#         This method tests right message is returned when the admin tries to fetch empty sale record
-#         """
-#         response = self.app.get("/api/v1/sales")
-#         self.assertEqual(response.status_code, 200)
-    
-#     def test_return_msg_if_user_try_to_fetch_a_specific_sale_record_that_does_not_exist(self):
-#         """
-#         This method tests right message is returned when user tries to fetch a specific  sale record that does not exist
-#         """
-#         response = self.app.get("/api/v1/sales/6")
-#         self.assertEqual(response.status_code, 404)
-#         response = self.app.get("/api/v1/sales/0")
-#         self.assertEqual(response.status_code, 400)
 
-#     def test_if_attendant_try_to_add_sale_record_with_wrong_data(self):
-#         """
-#         This method tests if error message is returned when admin tries to add product with wrong data 
-#         """
-#         response = self.app.post("/api/v1/sales", content_type = "application/json", data = json.dumps({
-#             "product_id": 0, "quantity": 1, "attendant_name": "Eric"
-#         }))
-#         self.assertEqual(response.status_code, 417)
-#         response = self.app.post("/api/v1/sales", content_type = "application/json", data = json.dumps({
-#             "product_id": "me", "quantity": 1, "attendant_name": "Eric"
-#         }))
-#         self.assertEqual(response.status_code, 417)
-#         response = self.app.post("/api/v1/sales", content_type = "application/json", data = json.dumps({
-#             "product_id": 1, "quantity": -9, "attendant_name": "Eric"
-#         }))
-#         self.assertIn("Invalid quantity. Qty must be greater than 0",str(response.data))
-#         response = self.app.post("/api/v1/sales", content_type = "application/json", data = json.dumps({
-#             "product_id": 1, "quantity": 1, "attendant_name": "Er"
-#         }))
-#         self.assertEqual(response.status_code, 417)
-#         response = self.app.post("/api/v1/sales", content_type = "application/json", data = json.dumps({
-#             "product_id": 1, "quantity": 100, "attendant_name": "Eric"
-#         }))
-#         self.assertEqual(response.status_code, 417)
-#         response = self.app.post("/api/v1/sales", content_type = "application/json", data = json.dumps({
-#             "product_id": 1, "quantity": "three", "attendant_name": "Eric"
-#         }))
-#         self.assertEqual(response.status_code, 417)
-#         response = self.app.post("/api/v1/sales/l", content_type = "application/json", data = json.dumps({
-#             "product_id": 1, "quantity": 4, "attendant_name": "Eric"
-#         }))
-#         self.assertEqual(response.status_code, 405)
+class TestSale(unittest.TestCase):
+
+    def setUp(self):
+        self.app = app.test_client()
+        db.create_tables()
+        db.create_admin()
     
-#     def test_if_user_tries_to_add_sale_record_with_mising_or_more_fields(self):
-#         """
-#         This method tests if the attendant tries to add a sale record with missing or more field
-#         """
-#         response = self.app.post("/api/v1/sales", content_type = "application/json", data = json.dumps({
-#             "product_id": 1, "quantity": 1
-#         }))
-#         self.assertIn("Insuficiant number of inputs. please make sure all the fields are included", str(response.data))
-#         response = self.app.post("/api/v1/sales", content_type = "application/json", data = json.dumps({
-#             "product_id": 1, "quantity": 1, "attendant_name": "Eric", "other": 2
-#         }))
-#         self.assertEqual(response.status_code, 414)
+    def admin_token(self):
+        response = self.app.post('/api/v2/auth/login', content_type = 'json/application', data=json.dumps(dict(
+            username= "malaba",
+            password= "malaba"
+        ),))
+        token = json.loads(response.data)
+        return token
     
-#     def test_if_user_tries_to_add_sale_record_with_no_data(self):
-#         """
-#         This method tests if response returned is an error when user tried to add sale record with no data provided
-#         """
-#         response = self.app.post("/api/v1/sales", content_type = "application/json", data = None)
-#         self.assertIn("Bad request, your request should be a dictionary", str(response.data))
-#         response = self.app.post("/api/v1/sales", content_type = "application/json", data = json.dumps({}))
-#         self.assertIn("Bad request, your request should be a dictionary", str(response.data))
+    def attendant_token(self):
+        token = self.admin_token()
+        response = self.app.post('/api/v2/auth/signup', headers={'Authorization': 'Bearer '+ token['token']}, content_type = 'json/application', data=json.dumps({
+            "username": "eric",
+            "email": "eric@store.com",
+            "password": "eubule",
+            "user_role": "attendant"
+        }))
+        response = self.app.post('/api/v2/auth/login', content_type = 'json/application', data=json.dumps(dict(
+            username= "eric",
+            password= "eubule"
+        ),))
+        token = json.loads(response.data)
+        return token
     
-#     def test_if_attendant_adds_sale_record_successfully(self):
-#         """
-#         This method tests if the the store attendant can successfully add a new sale record
-#         """
-#         response = self.app.post("/api/v1/products", content_type = "application/json", data = json.dumps({
-#             "name": "LD2", "price": 400000, "quantity": 45,"min_quantity": 1, "category": "TVs"
-#         }))
-#         response = self.app.post("/api/v1/sales", content_type = "application/json", data = json.dumps({
-#             "product_id": 1, "quantity": 1, "attendant_name": "Eric"
-#         }))
-#         self.assertEqual(response.status_code, 201)
+    def tearDown(self):
+        db.delete_tables()
     
-#     def test_if_admin_can_successfully_fetch_all_sale_records(self):
-#         """
-#         This method tests if admin can successfully fecth all sale records
-#         """
-#         response = self.app.get("/api/v1/sales")
-#         self.assertEqual(response.status_code, 200)
+    def test_if_attendant_can_successfuly_make_a_sale_order(self):
+        token = self.admin_token()
+        product = {"product_name": "DVD1", "price": 150000, "quantity": 43, "min_qty_allowed": 1}
+        response = self.app.post("/api/v2/products", content_type = "json/application",headers = {'Authorization' : 'Bearer '+ token['token']}, data=json.dumps(product))
+        response = self.app.post("/api/v2/sales", content_type = 'json/application', headers = {'Authorization' : 'Bearer ' + token['token']}, data = json.dumps({"product_id": 1, "quantity": 1, "attendant_name": "Eric"}))
+        self.assertEqual(response.status_code, 403)
+        token = self.attendant_token()
+        response = self.app.post("/api/v2/sales", content_type = 'json/application', headers = {'Authorization' : 'Bearer ' + token['token']}, data = json.dumps({"product_id": 1, "quantity": 1, "attendant_name": "Eric"}))
+        self.assertEqual(response.status_code, 201)
     
-#     def test_if_user_can_successfully_fetch_a_specific_sale_record(self):
-#         """
-#         This method tests if user can successfully fecth a specific sale record
-#         """
-#         response = self.app.get("/api/v1/sales/1")
-#         self.assertEqual(response.status_code, 200)
+    def test_if_user_tries_to_make_sale_with_wrong_data(self):
+        token = self.admin_token()
+        product = {"product_name": "DVD1", "price": 150000, "quantity": 43, "min_qty_allowed": 1}
+        response = self.app.post("/api/v2/products", content_type = "json/application",headers = {'Authorization' : 'Bearer '+ token['token']}, data=json.dumps(product))
+        token = self.attendant_token()
+        response = self.app.post("/api/v2/sales", content_type = 'json/application', headers = {'Authorization' : 'Bearer ' + token['token']}, data = json.dumps({}))
+        self.assertIn("Bad request, your request should be a dictionary", str(response.data))
+        response = self.app.post("/api/v2/sales", content_type = 'json/application', headers = {'Authorization' : 'Bearer ' + token['token']}, data = json.dumps({"product_id": 1, "attendant_name": "Eric"}))
+        self.assertIn("Insuficiant number of inputs. please make sure all the fields are included", str(response.data))
+        response = self.app.post("/api/v2/sales", content_type = 'json/application', headers = {'Authorization' : 'Bearer ' + token['token']}, data = json.dumps({"product_id": 1, "quantity": 1, "attendant_name": "Eric", "other": 1}))
+        self.assertEqual(response.status_code, 414)
+        response = self.app.post("/api/v2/sales", content_type = 'json/application', headers = {'Authorization' : 'Bearer ' + token['token']}, data = json.dumps({"Product_id": 1, "quantity": 1, "attendant_name": "Eric"}))
+        self.assertEqual(response.status_code, 400)
+        response = self.app.post("/api/v2/sales", content_type = 'json/application', headers = {'Authorization' : 'Bearer ' + token['token']}, data = json.dumps({"product_id": 1, "quantity": -3, "attendant_name": "Eric"}))
+        self.assertEqual(response.status_code, 417)
+        response = self.app.post("/api/v2/sales", content_type = 'json/application', headers = {'Authorization' : 'Bearer ' + token['token']}, data = json.dumps({"product_id": 4, "quantity": 1, "attendant_name": "Eric"}))
+        self.assertIn("Product with id 4 does not exist", str(response.data))
+    
+    def test_if_admin_tries_to_fetch_sales_when_there_is_no_sales_made_yet(self):
+        token = self.attendant_token()
+        response = self.app.get("/api/v2/sales", headers = {'Authorization' : 'Bearer ' + token['token']})
+        self.assertEqual(response.status_code, 403)
+        token = self.admin_token()
+        response = self.app.get("/api/v2/sales", headers = {'Authorization' : 'Bearer ' + token['token']})
+        self.assertIn("Oh oh! It looks like there is are no sale orders made yet", str(response.data))
+
+    def test_if_admin_can_successfully_fetch_all_products(self):
+        token = self.admin_token()
+        product = {"product_name": "DVD1", "price": 150000, "quantity": 43, "min_qty_allowed": 1}
+        response = self.app.post("/api/v2/products", content_type = "json/application",headers = {'Authorization' : 'Bearer '+ token['token']}, data=json.dumps(product))
+        token = self.attendant_token()
+        response = self.app.post("/api/v2/sales", content_type = 'json/application', headers = {'Authorization' : 'Bearer ' + token['token']}, data = json.dumps({"product_id": 1, "quantity": 1, "attendant_name": "Eric"}))
+        token = self.admin_token()
+        response = self.app.get("/api/v2/sales", headers = {'Authorization' : 'Bearer ' + token['token']})
+        self.assertIn("Sales", str(response.data))
+
+    def test_if_user_can_successfully_fetch_a_specific_sale_order(self):
+        token = self.admin_token()
+        product = {"product_name": "DVD1", "price": 150000, "quantity": 43, "min_qty_allowed": 1}
+        response = self.app.post("/api/v2/products", content_type = "json/application",headers = {'Authorization' : 'Bearer '+ token['token']}, data=json.dumps(product))
+        token = self.attendant_token()
+        response = self.app.post("/api/v2/sales", content_type = 'json/application', headers = {'Authorization' : 'Bearer ' + token['token']}, data = json.dumps({"product_id": 1, "quantity": 1, "attendant_name": "Eric"}))
+        response = self.app.get("/api/v2/sales/me", headers = {'Authorization' : 'Bearer ' + token['token']})
+        self.assertIn("Bad request. Id should be an integer", str(response.data))
+        response = self.app.get("/api/v2/sales/0", headers = {'Authorization' : 'Bearer ' + token['token']})
+        self.assertIn("Invalid Id. Must be a positive number", str(response.data))
+        response = self.app.get("/api/v2/sales/3", headers = {'Authorization' : 'Bearer ' + token['token']})
+        self.assertIn("Sale with id 3 not found", str(response.data))
+        response = self.app.get("/api/v2/sales/1", headers = {'Authorization' : 'Bearer ' + token['token']})
+        self.assertIn("Sale order", str(response.data))

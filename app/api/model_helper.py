@@ -212,7 +212,7 @@ def sale_validation(product_id, quantity, attendant_name):
         cursor.execute(query)
         product = cursor.fetchone()
         if not product:
-            return "Product with id {} does not exist"
+            return "Product with id {} does not exist".format(product_id)
         return "Valid"
 
 def is_products_empty():
@@ -241,5 +241,5 @@ def get_sale_id_validation(id):
             return valid_id(id)
     sale = sale_order.get_sale_record(id)
     if not sale:
-        return "Sale with id {} not found. put a valid id".format(id)
+        return "Sale with id {} not found".format(id)
     return "Valid"
