@@ -14,7 +14,7 @@ class Database():
         """
         This method initializes the database connection and cursor to execute SQL statements
         """
-        if os.getenv('APP_SETTINGS') == 'test_db':
+        if os.getenv('APP_SETTINGS') == 'testing':
             self.db = 'test_db'
         else:
             self.db = 'storemanager'
