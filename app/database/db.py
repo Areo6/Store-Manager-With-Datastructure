@@ -18,14 +18,12 @@ class Database():
             self.db = 'test_db'
         else:
             self.db = 'storemanager'
-        try:
-            print(self.db)
-            print(os.getenv('APP_SETTINGS'))
-            self.conn = psycopg2.connect(dbname=self.db, user='postgres', host = 'localhost', password='postgres', port=5432)
-            self.conn.autocommit = True
-            self.cur = self.conn.cursor(cursor_factory=ex.RealDictCursor)
-        except:
-            pprint("Database error")
+        print(self.db)
+        print(os.getenv('APP_SETTINGS'))
+        self.conn = psycopg2.connect(dbname=self.db, user='postgres', host = 'localhost', password='postgres', port=5432)
+        self.conn.autocommit = True
+        self.cur = self.conn.cursor(cursor_factory=ex.RealDictCursor)
+        
     
     def create_tables(self):
         """
