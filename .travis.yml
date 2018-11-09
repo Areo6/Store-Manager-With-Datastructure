@@ -13,7 +13,7 @@ env:
 install:
   - pip install -r requirements.txt
 
-before script:
+before_script:
   - psql -c 'createdb test_db;' -U postgres
 
 script:
