@@ -1,6 +1,6 @@
-from database.validation import *
-from database.db import Database
-from database.models import *
+from app.database.validation import *
+from app.database.db import Database
+from app.database.models import *
 
 
 db = Database()
