@@ -3,8 +3,18 @@ language: python
 python:
   - "3.5.2"
 
+services:
+  - postgresql
+
+env:
+  global:
+    - APP_SETTINGS="testing"
+
 install:
   - pip install -r requirements.txt
+
+before_script:
+  - "psql -c 'create database test_db;' -U postgres"
 
 script:
   - python3 -m pytest --cov app/
