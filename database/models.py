@@ -1,5 +1,5 @@
-from api.validation import *
-from api.db import Database
+from database.validation import *
+from database.db import Database
 
 
 db = Database()

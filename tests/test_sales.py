@@ -1,7 +1,7 @@
 from flask import json, jsonify
 from app import app
 import unittest
-from api.db import Database
+from database.db import Database
 
 
 db = Database()

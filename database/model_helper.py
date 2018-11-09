@@ -1,6 +1,6 @@
-from api.validation import *
-from api.db import Database
-from api.models import *
+from database.validation import *
+from database.db import Database
+from database.models import *
 
 
 db = Database()
@@ -20,7 +20,7 @@ def user_validation(username, email, password, user_role):
     if is_valid_username(username) != "Valid":
         return is_valid_username(username)
     if is_valid_email(email) != "Valid":
-        return is_password(email)
+        return is_valid_email(email)
     if is_valid_password(password) != "Valid":
         return is_valid_password(password)
     if is_valid_role(user_role) != "Valid":
@@ -47,15 +47,6 @@ def is_user_exist(username):
     cursor.execute(query)
     user = cursor.fetchone()
     if user:
-        return True
-    else:
-        return False
-
-def is_email_exist(email):
-    query = ("""SELECT * FROM users WHERE email = '{}'""".format(email))
-    cursor.execute(query)
-    email = cursor.fetchone()
-    if email:
         return True
     else:
         return False
@@ -110,7 +101,7 @@ def product_validation(name, price, qty_available, min_qty_allowed):
         cursor.execute(query)
         product = cursor.fetchone()
         if product:
-            return "Product with name {} already exists. Choose another name".format(name)
+            return "Product with name {} already exists".format(name)
         return "Valid"
 
 def product_update_validation(id,name, price, qty_available, min_qty_allowed):

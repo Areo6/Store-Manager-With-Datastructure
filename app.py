@@ -1,5 +1,5 @@
 from app import app
-from app.api.db import Database
+from database.db import Database
 
 
 if __name__ == "__main__":

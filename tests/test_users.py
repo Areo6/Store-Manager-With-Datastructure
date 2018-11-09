@@ -1,7 +1,7 @@
 from flask import json, jsonify
 from app import app
 import unittest
-from app.api.db import Database
+from database.db import Database
 
 
 db = Database()
@@ -44,7 +44,8 @@ class TestUser(unittest.TestCase):
         user = {"username": "malaba", "password": "malaba"}
         response = self.app.post("/api/v2/auth/login", content_type = "json/application", data=json.dumps(user))
         self.assertIn("User successfully login", str(response.data))
-        print(response.data)
+        response = self.app.post("/api/v2/auth/login", content_type = "json/application", data=json.dumps({"username": "ma", "password": "malaba"}))
+        self.assertIn("Invalid Name. Name must be at least 3 characters", str(response.data))
         
     
     def test_if_admin_can_register_successfully(self):
@@ -84,6 +85,12 @@ class TestUser(unittest.TestCase):
         response = self.app.post('/api/v2/auth/signup', headers={'Authorization': 'Bearer '+ token['token']}, content_type = 'json/application', data=json.dumps({"username": "eric", "email": "eric@store.com", "password": "eubule","user_rol": "attendant"}))
         self.assertIn("Either username, email, password or user_role is missing. Please check the spelling", str(response.data))
         response = self.app.post('/api/v2/auth/signup', headers={'Authorization': 'Bearer '+ token['token']}, content_type = 'json/application', data=json.dumps({"username": "er", "email": "eric@store.com", "password": "eubule","user_role": "attendant"}))
+        self.assertEqual(response.status_code, 417)
+        response = self.app.post('/api/v2/auth/signup', headers={'Authorization': 'Bearer '+ token['token']}, content_type = 'json/application', data=json.dumps({"username": "eric", "email": "ericstorecom", "password": "eubule","user_role": "attendant"}))
+        self.assertEqual(response.status_code, 417)
+        response = self.app.post('/api/v2/auth/signup', headers={'Authorization': 'Bearer '+ token['token']}, content_type = 'json/application', data=json.dumps({"username": "eric", "email": "eric@store.com", "password": "eub","user_role": "attendant"}))
+        self.assertEqual(response.status_code, 417)
+        response = self.app.post('/api/v2/auth/signup', headers={'Authorization': 'Bearer '+ token['token']}, content_type = 'json/application', data=json.dumps({"username": "eric", "email": "eric@store.com", "password": "eubule","user_role": "atendant"}))
         self.assertEqual(response.status_code, 417)
 
     def test_if_the_admin_can_successfuly_update_user_role(self):

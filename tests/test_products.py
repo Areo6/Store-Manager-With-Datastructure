@@ -1,7 +1,7 @@
 from flask import json, jsonify
 from app import app
 import unittest
-from api.db import Database
+from database.db import Database
 
 
 db = Database()
@@ -45,6 +45,10 @@ class TestProduct(unittest.TestCase):
         product = {"product_name": "DVD1", "price": 150000, "quantity": 43, "min_qty_allowed": 1}
         response = self.app.post("/api/v2/products", content_type = "json/application",headers = {'Authorization' : 'Bearer '+ token['token']}, data=json.dumps(product))
         self.assertIn("Successfully Added Product", str(response.data))
+        product = {"product_name": "DVD1", "price": 150000, "quantity": 43, "min_qty_allowed": 1}
+        response = self.app.post("/api/v2/products", content_type = "json/application",headers = {'Authorization' : 'Bearer '+ token['token']}, data=json.dumps(product))
+        self.assertIn("Product with name DVD1 already exists", str(response.data))
+
 
     def test_if_admin_tries_add_product_with_mising_field(self):
         token = self.admin_token()
@@ -73,6 +77,9 @@ class TestProduct(unittest.TestCase):
         product = {"product_name": "DVD", "price": 300000, "quantity": 1, "min_qty_allowed": -1}
         response = self.app.post("/api/v2/products", content_type= "json/application", headers = {'Authorization': 'Bearer ' + token['token']}, data = json.dumps(product))
         self.assertEqual(response.status_code, 417)
+        product = {"product_name": "DVD", "price": 300000, "quantity": -1, "min_qty_allowed": -1}
+        response = self.app.post("/api/v2/products", content_type= "json/application", headers = {'Authorization': 'Bearer ' + token['token']}, data = json.dumps(product))
+        self.assertEqual(response.status_code, 417)
     
     def test_if_attendant_tries_to_create_a_product(self):
         token = self.attendant_token()
@@ -85,6 +92,16 @@ class TestProduct(unittest.TestCase):
         response = self.app.post("/api/v2/products", content_type = "json/application",headers = {'Authorization' : 'Bearer '+ token['token']}, data=json.dumps(product))
         response = self.app.put("/api/v2/products/1", content_type = "json/application", headers = {'Authorization': 'Bearer ' + token['token']}, data = json.dumps({"product_name": "DVD2", "price": 300000, "quantity": 43, "min_qty_allowed": 1}))
         self.assertEqual(response.status_code, 202)  
+        response = self.app.put("/api/v2/products/4", content_type = "json/application", headers = {'Authorization': 'Bearer ' + token['token']}, data = json.dumps({"product_name": "DVD2", "price": 300000, "quantity": 43, "min_qty_allowed": 1}))
+        self.assertEqual(response.status_code, 417)
+        response = self.app.put("/api/v2/products/1", content_type = "json/application", headers = {'Authorization': 'Bearer ' + token['token']}, data = json.dumps({"product_name": "DV", "price": 300000, "quantity": 43, "min_qty_allowed": 1}))
+        self.assertEqual(response.status_code, 417)
+        response = self.app.put("/api/v2/products/1", content_type = "json/application", headers = {'Authorization': 'Bearer ' + token['token']}, data = json.dumps({"product_name": "DVD1", "price": "one", "quantity": 43, "min_qty_allowed": 1}))
+        self.assertEqual(response.status_code, 417)
+        response = self.app.put("/api/v2/products/1", content_type = "json/application", headers = {'Authorization': 'Bearer ' + token['token']}, data = json.dumps({"product_name": "DVD1", "price": 300000, "quantity": "one", "min_qty_allowed": 1}))
+        self.assertEqual(response.status_code, 417)  
+        response = self.app.put("/api/v2/products/1", content_type = "json/application", headers = {'Authorization': 'Bearer ' + token['token']}, data = json.dumps({"product_name": "DVD1", "price": 30000, "quantity": 43, "min_qty_allowed": "one"}))
+        self.assertEqual(response.status_code, 417)
 
     def test_if_user_can_view_all_products(self):
         token = self.attendant_token()
